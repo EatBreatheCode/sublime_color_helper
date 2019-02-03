@@ -51,9 +51,10 @@
 							{
 								"caption": "Settings",
 								"command": "edit_settings",
-								"args": {
+								"args":
+								{
 									"base_file": "${packages}/ColorHelper/color_helper.sublime-settings",
-									"default": "// Settings in here override those in \"ColorHelper/color_helper.sublime-settings\",\n\n{\n\t$0\n}\n"
+									"default": "{\n$0\n}\n"
 								}
 							},
 							{ "caption": "-" },
@@ -64,16 +65,12 @@
 							{
 								"caption": "Documentation",
 								"command": "color_helper_open_site",
-								"args": {
-									"url": "https://facelessuser.github.io/ColorHelper/"
-								}
+								"args": { "url": "https://facelessuser.github.io/ColorHelper/" }
 							},
 							{
 								"caption": "Quick Start Guide",
 								"command": "color_helper_doc",
-								"args": {
-									"page": "${packages}/ColorHelper/quickstart.md"
-								}
+								"args": { "page": "${packages}/ColorHelper/QUICKSTART.md" }
 							},
 							{ "caption": "-" },
 							{
@@ -83,9 +80,12 @@
 							{
 								"caption": "Issues",
 								"command": "color_helper_open_site",
-								"args": {
-									"url": "https://github.com/facelessuser/ColorHelper/issues"
-								}
+								"args": { "url": "https://github.com/facelessuser/ColorHelper/issues" }
+							},
+							{
+								"caption": "README",
+								"command": "open_file",
+								"args": { "file": "${packages}/ColorHelper/README.md" }
 							}
 						]
 					}
