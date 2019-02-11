@@ -21,7 +21,7 @@ ColorHelper makes work with colors easier by providing inline color previews in 
 
 # Documentation
 
-http://eatbreathecode.github.io/ColorHelper/
+https://eatbreathecode.github.io/sublime_color_helper/
 
 # License
 
