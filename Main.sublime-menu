@@ -50,13 +50,29 @@
 						[
 							{
 								"caption": "Settings",
-								"command": "z_edit_settings",
+								"command": "edit_settings",
 								"args":
 								{
-									"base_file": "${packages}/ColorHelper/color_helper.sublime-settings",
-									"user_file": "${packages}/User/ColorHelper/color_helper.sublime-settings",
+									"base_file": "${packages}/ColorHelper/ColorHelper.sublime-settings",
 									"default": "{\n\t$0\n}\n"
 								}
+							},
+							{ "caption": "-" },
+							{
+								"caption": "Menus",
+								"children":
+								[
+									{
+										"caption": "Main Menu",
+										"command": "z_edit_settings",
+										"args":
+										{
+											"file": "${packages}/ColorHelper/Main.sublime-menu",
+											"is_parent_setting": "1",
+											"contents": "[\n\t$0\n]\n"
+										}
+									}
+								]
 							},
 							{ "caption": "-" },
 							{

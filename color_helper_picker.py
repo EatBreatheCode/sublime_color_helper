@@ -392,7 +392,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			self.template_vars['webcolor_info'] = True
 			self.template_vars['webcolor_value'] = self.web_color
 		if 'hex' in self.allowed_colors or 'hex_compressed' in self.allowed_colors:
-			settings = sublime.load_settings('color_helper.sublime-settings')
+			settings = sublime.load_settings('ColorHelper.sublime-settings')
 			use_upper = settings.get("upper_case_hex", False)
 			color = self.color[:-2].lower()
 			self.template_vars['hex_info'] = True
@@ -434,7 +434,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 	def set_sizes(self):
 		"""Get sizes."""
 
-		settings = sublime.load_settings('color_helper.sublime-settings')
+		settings = sublime.load_settings('ColorHelper.sublime-settings')
 		self.graphic_size = qualify_settings(settings, 'graphic_size', 'medium')
 		self.line_height = util.get_line_height(self.view)
 		top_pad = self.view.settings().get('line_padding_top', 0)
@@ -476,7 +476,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		self.compress_hex = compress_hex
 		self.allowed_colors = allowed_colors
 		self.template_vars = {}
-		self.hex_map = sublime.load_settings('color_helper.sublime-settings').get('use_hex_color_picker', True)
+		self.hex_map = sublime.load_settings('ColorHelper.sublime-settings').get('use_hex_color_picker', True)
 		rgba = util.RGBA(color)
 		self.set_sizes()
 		self.hsl = hsl

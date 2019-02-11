@@ -76,7 +76,7 @@ The Color Delete Panel can delete any color from the given palette.  A user simp
 
 ## Settings
 
-Settings for Color Helper are contained within the `color_helper.sublime-settings` file.
+Settings for Color Helper are contained within the `ColorHelper.sublime-settings` file.
 
 ### `auto_popup`
 

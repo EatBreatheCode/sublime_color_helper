@@ -109,7 +109,7 @@ def log(*args):
 def debug(*args):
 	"""Log if debug enabled."""
 
-	if sublime.load_settings("color_helper.sublime-settings").get('debug', False):
+	if sublime.load_settings("ColorHelper.sublime-settings").get('debug', False):
 		log(*args)
 
 
@@ -117,7 +117,7 @@ def get_line_height(view):
 	"""Get the line height."""
 
 	height = view.line_height()
-	settings = sublime.load_settings("color_helper.sublime-settings")
+	settings = sublime.load_settings("ColorHelper.sublime-settings")
 
 	return int((height / 2.0) if LINE_HEIGHT_WORKAROUND and settings.get('line_height_workaround', False) else height)
 

@@ -35,7 +35,7 @@ You probably are using a syntax highlighter file that hasn't had support added y
 
 # ColorHelper Doesn't Support Colors in (Insert File Type Here)
 
-You may need to add support rules via a pull request.  Check out the [settings](sub://Packages/ColorHelper/color_helper.sublime-settings) file to see existing rules.
+You may need to add support rules via a pull request.  Check out the [settings](sub://Packages/ColorHelper/ColorHelper.sublime-settings) file to see existing rules.
 
 # ColorHelper Doesn't Support My Custom Colors Format
 
