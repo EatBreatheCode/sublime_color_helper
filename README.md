@@ -25,4 +25,4 @@ https://eatbreathecode.github.io/sublime_color_helper/
 
 # License
 
-This work is licensed under the [The MIT License](LICENSE.md).
+This work is licensed under the [The MIT License](LICENSE).
