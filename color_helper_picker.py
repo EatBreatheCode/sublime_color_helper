@@ -142,13 +142,13 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 					"border_size": BORDER_SIZE, "height": self.height, "width": self.width, "check_size": check_size
 				}
 
-					if y == 0:
-						border_map = 0xb
-					elif y == 10:
-						border_map = 0xe
-					else:
-						border_map = 0xa
-					kwargs["border_map"] = border_map
+				if y == 0:
+					border_map = 0xb
+				elif y == 10:
+					border_map = 0xe
+				else:
+					border_map = 0xa
+				kwargs["border_map"] = border_map
 
 				html_colors[y].append(
 					'<a href="%s">%s</a>' % (
