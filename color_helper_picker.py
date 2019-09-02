@@ -96,25 +96,25 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 						"check_size": check_size
 					}
 
-						if y == 0 and x == 0:
-							border_map = colorbox.TOP | colorbox.LEFT
-						elif y == 0 and x == 14:
-							border_map = colorbox.TOP | colorbox.RIGHT
-						elif y == 0:
-							border_map = colorbox.TOP
-						elif y == 10 and x == 0:
-							border_map = colorbox.BOTTOM | colorbox.LEFT
-						elif y == 10 and x == 14:
-							border_map = colorbox.BOTTOM | colorbox.RIGHT
-						elif y == 10:
-							border_map = colorbox.BOTTOM
-						elif x == 0:
-							border_map = colorbox.LEFT
-						elif x == 14:
-							border_map = colorbox.RIGHT
-						else:
-							border_map = 0
-						kwargs["border_map"] = border_map
+					if y == 0 and x == 0:
+						border_map = colorbox.TOP | colorbox.LEFT
+					elif y == 0 and x == 14:
+						border_map = colorbox.TOP | colorbox.RIGHT
+					elif y == 0:
+						border_map = colorbox.TOP
+					elif y == 10 and x == 0:
+						border_map = colorbox.BOTTOM | colorbox.LEFT
+					elif y == 10 and x == 14:
+						border_map = colorbox.BOTTOM | colorbox.RIGHT
+					elif y == 10:
+						border_map = colorbox.BOTTOM
+					elif x == 0:
+						border_map = colorbox.LEFT
+					elif x == 14:
+						border_map = colorbox.RIGHT
+					else:
+						border_map = 0
+					kwargs["border_map"] = border_map
 
 					html_colors[-1].append(
 						'<a href="%s">%s</a>' % (

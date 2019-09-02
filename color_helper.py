@@ -398,8 +398,8 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 				calc.calc()
 				value = target_color
 			if not is_replace:
-			self.view.sel().subtract(sels[0])
-			self.view.sel().add(calc.region)
+				self.view.sel().subtract(sels[0])
+				self.view.sel().add(calc.region)
 			self.view.run_command("insert", {"characters": value})
 		self.view.hide_popup()
 
