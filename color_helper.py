@@ -1841,7 +1841,7 @@ class ChThread(threading.Thread):
 		while not self.abort:
 			task = self.queue.get()
 			while task and not self.abort:
-			if self.modified is True and time() - self.time > self.wait_time:
+				if self.modified is True and time() - self.time > self.wait_time:
 					sublime.set_timeout(self.payload, 0)
 					task = False
 			sleep(0.5)
