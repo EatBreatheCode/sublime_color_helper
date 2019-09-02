@@ -8,17 +8,11 @@ import mdpopups
 from mdpopups import colorbox
 import sublime
 import sublime_plugin
-from ColorHelper.lib import csscolors
-import ColorHelper.color_helper_util as util
+from .lib import csscolors
+from . import color_helper_util as util
 import copy
-from ColorHelper.multiconf import get as qualify_settings
-
-try:
-	popupver = mdpopups.version()
-except Exception:
-	popupver = (0, 0, 0)
-
-BORDER_MAP_SUPPORT = popupver >= (1, 3, 0)
+from .multiconf import get as qualify_settings
+from .lib.rgba import RGBA
 
 color_map_data = [
 	['036', '369', '36c', '039', '009', '00c', '006'],
@@ -40,10 +34,12 @@ color_map = None
 color_map_size = False
 color_map_style = None
 line_height = None
+default_border = None
+color_scale = None
 
 SPACER = '#00000000'
-OUTER_BORDER = '#fefefeff'
-INNER_BORDER = '#333333ff'
+
+BORDER_SIZE = 1
 
 
 class ColorHelperPickerCommand(sublime_plugin.TextCommand):
@@ -56,16 +52,22 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		global color_map_size
 		global color_map_style
 		global line_height
+		global default_border
+		global color_scale
 
 		if (
 			color_map is None or
 			self.graphic_size != color_map_size or
+			self.graphic_scale != color_scale or
 			self.line_height != line_height or
+			self.default_border != default_border or
 			color_map_style != "square"
 		):
 			color_map_size = self.graphic_size
+			color_scale = self.graphic_scale
 			color_map_style = "square"
 			line_height = self.line_height
+			default_border = self.default_border
 
 			html_colors = []
 
@@ -90,11 +92,10 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 					rgba.fromhls(h, l, s)
 					color = rgba.get_rgba()
 					kwargs = {
-						"border_size": 2, "height": self.height, "width": self.width,
+						"border_size": BORDER_SIZE, "height": self.height, "width": self.width,
 						"check_size": check_size
 					}
 
-					if BORDER_MAP_SUPPORT:
 						if y == 0 and x == 0:
 							border_map = colorbox.TOP | colorbox.LEFT
 						elif y == 0 and x == 14:
@@ -118,7 +119,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 					html_colors[-1].append(
 						'<a href="%s">%s</a>' % (
 							color, mdpopups.color_box(
-								[color], OUTER_BORDER, INNER_BORDER,
+								[color], self.default_border,
 								**kwargs
 							)
 						)
@@ -137,9 +138,10 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 				h, lum, s = rgba.tohls()
 				rgba.fromhls(h, l, s)
 				color = rgba.get_rgba()
-				kwargs = {"border_size": 2, "height": self.height, "width": self.width, "check_size": check_size}
+				kwargs = {
+					"border_size": BORDER_SIZE, "height": self.height, "width": self.width, "check_size": check_size
+				}
 
-				if BORDER_MAP_SUPPORT:
 					if y == 0:
 						border_map = 0xb
 					elif y == 10:
@@ -151,7 +153,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 				html_colors[y].append(
 					'<a href="%s">%s</a>' % (
 						color, mdpopups.color_box(
-							[color], OUTER_BORDER, INNER_BORDER,
+							[color], self.default_border,
 							**kwargs
 						)
 					)
@@ -168,15 +170,21 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		global color_map_size
 		global color_map_style
 		global line_height
+		global default_border
+		global color_scale
 
 		if (
 			color_map is None or
 			self.graphic_size != color_map_size or
+			self.graphic_scale != color_scale or
 			self.line_height != line_height or
+			self.default_border != default_border or
 			color_map_style != "hex"
 		):
 			color_map_size = self.graphic_size
+			color_scale = self.graphic_scale
 			line_height = self.line_height
+			default_border = self.default_border
 			color_map_style = "hex"
 			padding = (self.width * 9)
 			decrement = True
@@ -184,25 +192,50 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			count = 0
 			check_size = self.check_size(self.height)
 
-			for row in color_map_data:
+			last_row = len(color_map_data) - 1
+			for y, row in enumerate(color_map_data):
 				html_colors.append('<span class="color-map-row">')
 				if padding:
 					pad = mdpopups.color_box(
-						[SPACER], border_size=0,
+						[SPACER],
 						height=self.height, width=padding, check_size=check_size, alpha=True
 					)
 					html_colors.append(pad)
-				for color in row:
+				last_col = len(row) - 1
+				for x, color in enumerate(row):
 					if len(self.color) == 3:
 						color = '#' + ''.join([c * 2 for c in color]) + 'ff'
 					else:
 						color = '#' + color + 'ff'
+
+					kwargs = {
+						"border_size": BORDER_SIZE, "height": self.height, "width": self.width, "check_size": check_size
+					}
+
+					border_map = 0
+					if y == 0 and x == 0:
+						border_map = colorbox.TOP | colorbox.LEFT
+					elif y == 0 and x == last_col:
+						border_map = colorbox.TOP | colorbox.RIGHT
+					elif y == 0:
+						border_map = colorbox.TOP
+					elif y == last_row and x == 0:
+						border_map = colorbox.BOTTOM | colorbox.LEFT
+					elif y == last_row and x == last_col:
+						border_map = colorbox.BOTTOM | colorbox.RIGHT
+					elif y == last_row:
+						border_map = colorbox.BOTTOM
+					elif x == 0:
+						border_map = colorbox.LEFT
+					elif x == last_col:
+						border_map = colorbox.RIGHT
+					kwargs['border_map'] = border_map
+
 					html_colors.append(
 						'<a href="%s">%s</a>' % (
 							color, mdpopups.color_box(
-								[color], OUTER_BORDER, INNER_BORDER,
-								border_size=2, height=self.height, width=self.width,
-								check_size=check_size
+								[color], self.default_border,
+								**kwargs
 							)
 						)
 					)
@@ -230,8 +263,8 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 					check_size=check_size, alpha=True
 				) +
 				mdpopups.color_box(
-					[self.color], OUTER_BORDER, INNER_BORDER,
-					border_size=2, height=self.height, width=self.width * (13 if self.hex_map else 16),
+					[self.color], self.default_border,
+					border_size=BORDER_SIZE, height=self.height, width=self.width * (13 if self.hex_map else 16),
 					check_size=check_size
 				)
 			)
@@ -249,8 +282,9 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			html.append(
 				'[%s](%s) %s<br>' % (
 					mdpopups.color_box(
-						[color], OUTER_BORDER, INNER_BORDER,
-						border_size=2, height=self.box_height, width=self.box_height * 8, check_size=check_size
+						[color], self.default_border,
+						border_size=BORDER_SIZE, height=self.height, width=self.box_height * 8,
+						check_size=check_size
 					),
 					color,
 					name
@@ -305,8 +339,9 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			html.append(
 				'[%s](%s) %s<br>' % (
 					mdpopups.color_box(
-						[color], OUTER_BORDER, INNER_BORDER,
-						border_size=2, height=self.box_height, width=self.box_height * 8, check_size=check_size
+						[color], self.default_border,
+						border_size=BORDER_SIZE, height=self.height, width=self.box_height * 8,
+						check_size=check_size
 					),
 					color,
 					label
@@ -324,13 +359,23 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		temp = []
 		count = 12
 		check_size = self.check_size(self.height)
+
 		while count:
 			getattr(rgba1, color_filter)(minimum)
-			kwargs = {"border_size": 2, "height": self.height, "width": self.width, "check_size": check_size}
+
+			border_map = colorbox.TOP | colorbox.BOTTOM | colorbox.LEFT
+			if count == 1:
+				border_map |= colorbox.RIGHT
+
+			kwargs = {
+				"border_size": BORDER_SIZE, "height": self.height, "width": self.width, "check_size": check_size,
+				"border_map": border_map
+			}
+
 			temp.append(
 				'[%s](%s)' % (
 					mdpopups.color_box(
-						[rgba1.get_rgba()], OUTER_BORDER, INNER_BORDER,
+						[rgba1.get_rgba()], self.default_border,
 						**kwargs
 					),
 					rgba1.get_rgba()
@@ -341,8 +386,8 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		html.append(
 			'[%s](%s)' % (
 				mdpopups.color_box(
-					[self.color], OUTER_BORDER, INNER_BORDER,
-					border_size=2, height=self.height_big, width=self.width, check_size=check_size
+					[self.color], self.default_border,
+					border_size=BORDER_SIZE, height=self.height_big, width=self.width, check_size=check_size
 				),
 				self.color
 			)
@@ -350,11 +395,20 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		count = 12
 		while count:
 			getattr(rgba2, color_filter)(maximum)
-			kwargs = {"border_size": 2, "height": self.height, "width": self.width, "check_size": check_size}
+
+			border_map = colorbox.TOP | colorbox.BOTTOM | colorbox.RIGHT
+			if count == 12:
+				border_map |= colorbox.LEFT
+
+			kwargs = {
+				"border_size": BORDER_SIZE, "height": self.height, "width": self.width, "check_size": check_size,
+				"border_map": border_map
+			}
+
 			html.append(
 				'[%s](%s)' % (
 					mdpopups.color_box(
-						[rgba2.get_rgba()], OUTER_BORDER, INNER_BORDER,
+						[rgba2.get_rgba()], self.default_border,
 						**kwargs
 					),
 					rgba2.get_rgba()
@@ -411,7 +465,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			self.template_vars['hexa_alpha'] = color[-2:]
 		if (
 			('hexa' in self.allowed_colors or 'hexa_compressed') and
-			(self.use_hex_argb is None or self.use_hex_argb is True)
+			(self.use_hex_argb is True)
 		):
 			color = '#' + (self.color[-2:] + self.color[1:-2]).lower()
 			self.template_vars['ahex_info'] = True
@@ -436,6 +490,9 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 
 		settings = sublime.load_settings('ColorHelper.sublime-settings')
 		self.graphic_size = qualify_settings(settings, 'graphic_size', 'medium')
+		self.graphic_scale = qualify_settings(settings, 'graphic_scale', None)
+		if not isinstance(self.graphic_scale, (int, float)):
+			self.graphic_scale = None
 		self.line_height = util.get_line_height(self.view)
 		top_pad = self.view.settings().get('line_padding_top', 0)
 		bottom_pad = self.view.settings().get('line_padding_bottom', 0)
@@ -444,11 +501,18 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 			top_pad = 0
 		if bottom_pad is None:
 			bottom_pad = 0
-		self.box_height = self.line_height - int(top_pad + bottom_pad) - 6
+		box_height = self.line_height - int(top_pad + bottom_pad) - 6
+		if self.graphic_scale is not None:
+			box_height = box_height * self.graphic_scale
+			self.graphic_size = "small"
+		small = max(box_height, 8)
+		medium = max(box_height * 1.5, 8)
+		large = max(box_height * 2, 8)
+		self.box_height = int(small)
 		sizes = {
-			"small": (int(self.box_height * .85), int(self.box_height * .85), int(self.box_height * 1.0)),
-			"medium": (int(self.box_height), int(self.box_height), int(self.box_height * 1.25)),
-			"large": (int(self.box_height * 1.15), int(self.box_height * 1.15), int(self.box_height * 1.35))
+			"small": (int(small), int(small), int(small + small / 4)),
+			"medium": (int(medium), int(medium), int(medium + medium / 4)),
+			"large": (int(large), int(large), int(large + large / 4))
 		}
 		self.height, self.width, self.height_big = sizes.get(
 			self.graphic_size,
@@ -469,6 +533,19 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 		on_done=None, on_cancel=None
 	):
 		"""Run command."""
+
+		rgba = None
+		settings = sublime.load_settings('ColorHelper.sublime-settings')
+		border_clr = settings.get('image_border_color')
+		if border_clr is not None:
+			try:
+				rgba = RGBA(border_clr)
+			except Exception:
+				pass
+		if rgba is None:
+			rgba = RGBA(mdpopups.scope2style(self.view, '')['background'])
+			rgba.brightness(1.1 if rgba.get_luminance() <= 127 else .9)
+		self.default_border = rgba.get_rgb()
 
 		self.on_done = on_done
 		self.on_cancel = on_cancel

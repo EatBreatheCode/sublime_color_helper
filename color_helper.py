@@ -6,25 +6,26 @@ License: MIT
 """
 import sublime
 import sublime_plugin
-from ColorHelper.lib.rgba import RGBA
-from ColorHelper.lib import csscolors
+from .lib.rgba import RGBA
+from .lib import csscolors
 import threading
 from time import time, sleep
 import re
 import os
 import mdpopups
-import ColorHelper.color_helper_util as util
-from ColorHelper.color_helper_insert import InsertCalc, PickerInsertCalc
-from ColorHelper.multiconf import get as qualify_settings
+from . import color_helper_util as util
+from .color_helper_insert import InsertCalc, PickerInsertCalc
+from .multiconf import get as qualify_settings
 import traceback
 from html.parser import HTMLParser
+from queue import Queue
 
 __pc_name__ = "ColorHelper"
 
 PREVIEW_SCALE_Y = 2
 PALETTE_SCALE_X = 8
 PALETTE_SCALE_Y = 2
-BORDER_SIZE = 2
+BORDER_SIZE = 1
 PREVIEW_BORDER_SIZE = 1
 
 reload_flag = False
@@ -146,6 +147,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		return
 		if ch_thread.ignore_all:
 			return
+		start_task()
 		now = time()
 		ch_thread.modified = True
 		ch_thread.time = now
@@ -324,8 +326,9 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		"""Insert colors."""
 
 		sels = self.view.sel()
-		if (len(sels) == 1 and sels[0].size() == 0):
+		if (len(sels) == 1):
 			point = sels[0].begin()
+			is_replace = point != sels[0].end()
 			parts = target_color.split('@')
 			target_color = parts[0]
 			dlevel = len(parts[1]) if len(parts) > 1 else 3
@@ -394,6 +397,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 				calc = PickerInsertCalc(self.view, point, allowed_colors)
 				calc.calc()
 				value = target_color
+			if not is_replace:
 			self.view.sel().subtract(sels[0])
 			self.view.sel().add(calc.region)
 			self.view.run_command("insert", {"characters": value})
@@ -415,7 +419,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		colors.append(
 			'[%s](%s)' % (
 				mdpopups.color_box(
-					color_list, '#cccccc', '#333333',
+					color_list, self.default_border,
 					height=self.color_h, width=self.palette_w * PALETTE_SCALE_X,
 					border_size=BORDER_SIZE, check_size=self.check_size(self.color_h)
 				),
@@ -449,7 +453,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 				colors.append(
 					'[%s](__delete_color__:%s:%s:%s)' % (
 						mdpopups.color_box(
-							[no_alpha_color, color], '#cccccc', '#333333',
+							[no_alpha_color, color], self.default_border,
 							height=self.color_h, width=self.color_w, border_size=BORDER_SIZE,
 							check_size=check_size
 						),
@@ -460,7 +464,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 				colors.append(
 					'[%s](__insert__:%s:%s:%s)' % (
 						mdpopups.color_box(
-							[no_alpha_color, color], '#cccccc', '#333333',
+							[no_alpha_color, color], self.default_border,
 							height=self.color_h, width=self.color_w, border_size=BORDER_SIZE,
 							check_size=check_size
 						), f, palette_type, label
@@ -514,8 +518,8 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		template_vars['hsl_s'] = util.fmt_float(s * 100.0)
 		template_vars['hsl_l'] = util.fmt_float(l * 100.0)
 		template_vars['hwb_h'] = util.fmt_float(h2 * 360.0)
-		template_vars['hwb_s'] = util.fmt_float(w * 100.0)
-		template_vars['hwb_l'] = util.fmt_float(b * 100.0)
+		template_vars['hwb_w'] = util.fmt_float(w * 100.0)
+		template_vars['hwb_b'] = util.fmt_float(b * 100.0)
 
 		s = sublime.load_settings('ColorHelper.sublime-settings')
 		show_global_palettes = s.get('enable_global_user_palettes', True)
@@ -548,7 +552,7 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		no_alpha_color = color[:-2] if len(color) > 7 else color
 		template_vars['color_preview'] = (
 			mdpopups.color_box(
-				[no_alpha_color, color], '#cccccc', '#333333',
+				[no_alpha_color, color], self.default_border,
 				height=self.color_h * PREVIEW_SCALE_Y, width=self.palette_w * PALETTE_SCALE_X,
 				border_size=BORDER_SIZE, check_size=self.check_size(self.color_h)
 			)
@@ -729,17 +733,17 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 			if show_div:
 				show_div = False
 				template_vars['show_project_separator'] = True
-			project_palettes = []
+			proj_palettes = []
 			for palette in project_palettes:
 				name = palette.get("name")
-				project_palettes.append(
+				proj_palettes.append(
 					self.format_palettes(
 						palette.get('colors', []), name, '__project__', palette.get('caption'),
 						delete=delete,
 						color=color
 					)
 				)
-				template_vars['project_palettes'] = project_palettes
+				template_vars['project_palettes'] = proj_palettes
 
 		if update:
 			mdpopups.update_popup(
@@ -924,6 +928,9 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		"""Get sizes."""
 
 		self.graphic_size = qualify_settings(ch_settings, 'graphic_size', 'medium')
+		self.graphic_scale = qualify_settings(ch_settings, 'graphic_scale', None)
+		if not isinstance(self.graphic_scale, (int, float)):
+			self.graphic_scale = None
 		top_pad = self.view.settings().get('line_padding_top', 0)
 		bottom_pad = self.view.settings().get('line_padding_bottom', 0)
 		# Sometimes we strangely get None
@@ -932,10 +939,16 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 		if bottom_pad is None:
 			bottom_pad = 0
 		box_height = util.get_line_height(self.view) - int(top_pad + bottom_pad) - 6
+		if self.graphic_scale is not None:
+			box_height = box_height * self.graphic_scale
+			self.graphic_size = "small"
+		small = max(box_height, 8)
+		medium = max(box_height * 1.5, 8)
+		large = max(box_height * 2, 8)
 		sizes = {
-			"small": (box_height, box_height, box_height * 2),
-			"medium": (int(box_height * 1.5), int(box_height * 1.5), box_height * 2),
-			"large": (int(box_height * 2), int(box_height * 2), box_height * 2)
+			"small": (int(small), int(small), int(small) * 2),
+			"medium": (int(medium), int(medium), int(small) * 2),
+			"large": (int(large), int(large), int(small) * 2)
 		}
 		self.color_h, self.color_w, self.palette_w = sizes.get(
 			self.graphic_size,
@@ -953,8 +966,20 @@ class ColorHelperCommand(sublime_plugin.TextCommand):
 	def run(self, edit, mode, palette_name=None, color=None, auto=False):
 		"""Run the specified tooltip."""
 
-		self.set_sizes()
+		rgba = None
 		s = sublime.load_settings('ColorHelper.sublime-settings')
+		border_clr = s.get('image_border_color')
+		if border_clr is not None:
+			try:
+				rgba = RGBA(border_clr)
+			except Exception:
+				pass
+		if rgba is None:
+			rgba = RGBA(mdpopups.scope2style(self.view, '')['background'])
+			rgba.brightness(1.1 if rgba.get_luminance() <= 127 else .9)
+		self.default_border = rgba.get_rgb()
+
+		self.set_sizes()
 		use_color_picker_package = s.get('use_color_picker_package', False)
 		self.color_picker_package = use_color_picker_package and util.color_picker_available()
 		self.no_info = True
@@ -1200,7 +1225,12 @@ class ChPreview(object):
 					rgba = RGBA(mdpopups.scope2style(view, scope)['background'])
 					rgba.brightness(1.1 if rgba.get_luminance() <= 127 else .9)
 					preview_id = str(time())
-					color = '<style>html, body {margin: 0; padding:0;}</style><a href="%s">%s</a>' % (
+					color = (
+						'<style>'
+						'html, body {margin: 0; padding: 0;} a {line-height: 0;}'
+						'</style>'
+						'<a href="%s">%s</a>'
+					) % (
 						preview_id,
 						mdpopups.color_box(
 							[no_alpha_color, color], rgba.get_rgb(),
@@ -1382,6 +1412,7 @@ class ColorHelperListener(sublime_plugin.EventListener):
 			return
 
 		if not ch_thread.ignore_all:
+			start_task()
 			now = time()
 			ch_thread.modified = True
 			ch_thread.time = now
@@ -1668,6 +1699,7 @@ class ChThread(threading.Thread):
 		"""Setup the thread."""
 
 		self.reset()
+		self.queue = Queue()
 		threading.Thread.__init__(self)
 
 	def reset(self):
@@ -1675,6 +1707,7 @@ class ChThread(threading.Thread):
 
 		self.wait_time = 0.12
 		self.time = time()
+		self.queue = Queue()
 		self.modified = False
 		self.ignore_all = False
 		self.abort = False
@@ -1796,6 +1829,7 @@ class ChThread(threading.Thread):
 		"""Kill thread."""
 
 		self.abort = True
+		self.queue.put(True)
 		while self.is_alive():
 			pass
 		self.reset()
@@ -1803,9 +1837,13 @@ class ChThread(threading.Thread):
 	def run(self):
 		"""Thread loop."""
 
+		task = False
 		while not self.abort:
+			task = self.queue.get()
+			while task and not self.abort:
 			if self.modified is True and time() - self.time > self.wait_time:
-				sublime.set_timeout(lambda: self.payload(), 0)
+					sublime.set_timeout(self.payload, 0)
+					task = False
 			sleep(0.5)
 
 
@@ -1819,6 +1857,13 @@ def settings_reload():
 	reload_flag = True
 	ch_last_updated = time()
 	setup_previews()
+
+
+def start_task():
+	"""Start task."""
+
+	if ch_thread.is_alive():
+		ch_thread.queue.put(True)
 
 
 def setup_previews():

@@ -38,13 +38,13 @@
   {%- endif %}
   {%- if plugin.show_hexa_color %}
 [&gt;&gt;&gt;](__convert__:{{plugin.color}}:hexa){: .small} 
- <span class="support type">{{plugin.hexa_color}}</span>
+ <span class="support type">{{plugin.hex_color}}</span>
 <span class="support type alpha">{{plugin.hex_alpha}}</span>
 <br>
   {%- endif %}
   {%- if plugin.show_ahex_color %}
 [&gt;&gt;&gt;](__convert__:{{plugin.color}}:ahex){: .small} 
- <span class="support type">#</span>\
+ <span class="support type">#</span>
 <span class="support type alpha">{{plugin.hex_alpha}}</span>
 <span class="support type">{{plugin.ahex_color}}</span>
 <br>
@@ -81,12 +81,12 @@
   {%- endif %}
   {%- if plugin.show_hwb_color %}
 [&gt;&gt;&gt;](__convert__:{{plugin.color}}:hwb){: .small}
- <span class="keyword">hwb</span>(<span class="constant numeric">{{plugin.hsl_h}}, {{plugin.hsl_w}}%, {{plugin.hsl_b}}%</span>)
+ <span class="keyword">hwb</span>(<span class="constant numeric">{{plugin.hwb_h}}, {{plugin.hwb_w}}%, {{plugin.hwb_b}}%</span>)
 <br>
   {%- endif %}
   {%- if plugin.show_hwba_color %}
 [&gt;&gt;&gt;](__convert__:{{plugin.color}}:hwba){: .small}
- <span class="keyword">hwb</span>(<span class="constant numeric">{{plugin.hsl_h}}, {{plugin.hsl_w}}%, {{plugin.hsl_b}}%, {{plugin.alpha}}</span>)
+ <span class="keyword">hwb</span>(<span class="constant numeric">{{plugin.hwb_h}}, {{plugin.hwb_w}}%, {{plugin.hwb_b}}%, {{plugin.alpha}}</span>)
 <br>
   {%- endif %}
 {%- endif %}
