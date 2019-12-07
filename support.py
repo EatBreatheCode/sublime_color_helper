@@ -108,7 +108,7 @@ class ColorHelperOpenSiteCommand(sublime_plugin.ApplicationCommand):
 	"""Open site links."""
 
 	def run(self, url):
-        """Open the URL."""
+		"""Open the URL."""
 
 		webbrowser.open_new_tab(url)
 

@@ -250,7 +250,7 @@ def compress_hex(color):
 
 
 def alpha_dec_normalize(dec):
-    """Normalize a decimal alpha value."""
+	"""Normalize a decimal alpha value."""
 
 	temp = float(dec)
 	if temp < 0.0 or temp > 1.0:
@@ -261,7 +261,7 @@ def alpha_dec_normalize(dec):
 
 
 def alpha_percent_normalize(perc):
-    """Normalize a percent alpha value."""
+	"""Normalize a percent alpha value."""
 
 	alpha_float = clamp(float(perc.strip('%')), 0.0, 100.0) / 100.0
 	alpha_dec = fmt_float(alpha_float, 3)

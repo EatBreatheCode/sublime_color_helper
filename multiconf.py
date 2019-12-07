@@ -151,7 +151,7 @@ class Qualifications(object):
 
 	@classmethod
 	def exists(cls, key):
-        """See if qualifier exists."""
+		"""See if qualifier exists."""
 
 		return (key in cls.__qualifiers)
 
