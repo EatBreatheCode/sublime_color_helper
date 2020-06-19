@@ -7,6 +7,8 @@ Control's
 EmojiOne
 GitHub
 HREF
+HSL
+HWB
 HiDPI
 Inline
 JSON
@@ -22,6 +24,7 @@ RGBA
 SCSS
 Screencap
 Screenshot
+Twemoji
 Unescape
 argb
 biermeester
