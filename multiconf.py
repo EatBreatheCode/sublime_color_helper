@@ -10,25 +10,25 @@ value in a '.settings' file with a dictionary containing multiple values.
 Multiconf does this by using a dictionary with a special identifier
 "#multiconf#"  and a list of dictionaries identified by a qualifier of the form
 
-	"<qualifier name>:<qualifier value>[;<qualifier name>:<qualifier value>]..."
+    "<qualifier name>:<qualifier value>[;<qualifier name>:<qualifier value>]..."
 
 For example, the following setting
 
 ```
-	"user_home": "/home"
+    "user_home": "/home"
 ```
 
 would result in `get("user_home")` returning the value "/home" but it could also
 be replaced with
 
 ```
-	"user_home":  {
-					"#multiconf#": [
-						{"os:windows": "C:\\Users"},
-						{"os:linux;host:his_pc": "/home"},
-						{"os:linux;host:her_pc": "/home/her/special"}
-					]
-	}
+    "user_home":  {
+                    "#multiconf#": [
+                        {"os:windows": "C:\\Users"},
+                        {"os:linux;host:his_pc": "/home"},
+                        {"os:linux;host:her_pc": "/home/her/special"}
+                    ]
+    }
 ```
 
 Now the same configuration file will provide different values depending on the
@@ -71,115 +71,115 @@ QUALIFIERS = r"""([A-Za-z\d_]*):([^;]*)(?:;|$)"""
 
 
 def get(settings_obj, key, default=None, callback=None):
-	"""
-	Return a Sublime Text plugin setting value.
+    """
+    Return a Sublime Text plugin setting value.
 
-	Parameters:
-	  settings_obj - a sublime.Settings object or a dictionary containing
-					 settings
-	  key          - the name of the setting
-	  default      - the default value to return if the key value is not found.
-	  callback     - a callback function that, if provided, will be called with
-					 the found and default values as parameters.
+    Parameters:
+      settings_obj - a sublime.Settings object or a dictionary containing
+                     settings
+      key          - the name of the setting
+      default      - the default value to return if the key value is not found.
+      callback     - a callback function that, if provided, will be called with
+                     the found and default values as parameters.
 
-	"""
+    """
 
-	# Parameter validation
-	if not isinstance(settings_obj, (dict, sublime.Settings)):
-		raise AttributeError("Invalid settings object")
-	if not isinstance(key, str):
-		raise AttributeError("Invalid callback function")
-	if callback is not None and not hasattr(callback, '__call__'):
-		raise AttributeError("Invalid callback function")
+    # Parameter validation
+    if not isinstance(settings_obj, (dict, sublime.Settings)):
+        raise AttributeError("Invalid settings object")
+    if not isinstance(key, str):
+        raise AttributeError("Invalid callback function")
+    if callback is not None and not hasattr(callback, '__call__'):
+        raise AttributeError("Invalid callback function")
 
-	setting = settings_obj.get(key, default)
-	final_val = None
+    setting = settings_obj.get(key, default)
+    final_val = None
 
-	if isinstance(setting, dict) and "#multiconf#" in setting:
-		reject_item = False
-		for entry in setting["#multiconf#"]:
-			reject_item = False if isinstance(entry, dict) and len(entry) else True
+    if isinstance(setting, dict) and "#multiconf#" in setting:
+        reject_item = False
+        for entry in setting["#multiconf#"]:
+            reject_item = False if isinstance(entry, dict) and len(entry) else True
 
-			k, v = entry.popitem()
+            k, v = entry.popitem()
 
-			if reject_item:
-				continue
+            if reject_item:
+                continue
 
-			for qual in re.compile(QUALIFIERS).finditer(k):
-				if Qualifications.exists(qual.group(1)):
-					reject_item = not Qualifications.eval_qual(qual.group(1), qual.group(2))
-				else:
-					reject_item = True
-				if reject_item:
-					break
+            for qual in re.compile(QUALIFIERS).finditer(k):
+                if Qualifications.exists(qual.group(1)):
+                    reject_item = not Qualifications.eval_qual(qual.group(1), qual.group(2))
+                else:
+                    reject_item = True
+                if reject_item:
+                    break
 
-			if not reject_item:
-				final_val = v
-				break
+            if not reject_item:
+                final_val = v
+                break
 
-		if reject_item:
-			final_val = default
-	else:
-		final_val = setting
+        if reject_item:
+            final_val = default
+    else:
+        final_val = setting
 
-	return callback(final_val, default) if callback else final_val
+    return callback(final_val, default) if callback else final_val
 
 
 class QualException(Exception):
-	"""Qualification exception."""
+    """Qualification exception."""
 
-	pass
+    pass
 
 
 class Qualifications(object):
-	"""Qualifications."""
+    """Qualifications."""
 
-	__qualifiers = {}
+    __qualifiers = {}
 
-	@classmethod
-	def add_qual(cls, key, callback):
-		"""Add a qualifier."""
+    @classmethod
+    def add_qual(cls, key, callback):
+        """Add a qualifier."""
 
-		if isinstance(key, str) and re.match(r"^[a-zA-Z][a-zA-Z\d_]*$", key) is None:
-			raise QualException("'%s' is not a valid function name." % key)
-		if not hasattr(callback, '__call__'):
-			raise QualException("Bad function callback.")
-		if key in cls.__qualifiers:
-			raise QualException("'%s' qualifier already exists." % key)
+        if isinstance(key, str) and re.match(r"^[a-zA-Z][a-zA-Z\d_]*$", key) is None:
+            raise QualException("'%s' is not a valid function name." % key)
+        if not hasattr(callback, '__call__'):
+            raise QualException("Bad function callback.")
+        if key in cls.__qualifiers:
+            raise QualException("'%s' qualifier already exists." % key)
 
-		cls.__qualifiers[key] = callback
+        cls.__qualifiers[key] = callback
 
-	@classmethod
-	def exists(cls, key):
-		"""See if qualifier exists."""
+    @classmethod
+    def exists(cls, key):
+        """See if qualifier exists."""
 
-		return (key in cls.__qualifiers)
+        return (key in cls.__qualifiers)
 
-	@classmethod
-	def eval_qual(cls, key, value):
-		"""
-		Evaluate the qualifier.
+    @classmethod
+    def eval_qual(cls, key, value):
+        """
+        Evaluate the qualifier.
 
-		See if key is in the qualifier list,
-		and if so, test the value.
-		"""
+        See if key is in the qualifier list,
+        and if so, test the value.
+        """
 
-		try:
-			return cls.__qualifiers[key](value)
-		except Exception:
-			raise QualException("Failed to execute %s qualifier" % key)
+        try:
+            return cls.__qualifiers[key](value)
+        except Exception:
+            raise QualException("Failed to execute %s qualifier" % key)
 
 
 def _host_match(h):
-	"""Check if the host matches the input."""
+    """Check if the host matches the input."""
 
-	return (h.lower() == __CURRENT_HOSTNAME)
+    return (h.lower() == __CURRENT_HOSTNAME)
 
 
 def _os_match(os):
-	"""See if the OS platform matches the input."""
+    """See if the OS platform matches the input."""
 
-	return (os == sublime.platform())
+    return (os == sublime.platform())
 
 
 Qualifications.add_qual("host", _host_match)
