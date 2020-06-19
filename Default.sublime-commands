@@ -1,21 +1,21 @@
 [
-	{
-		"caption": "Color Helper: Index Colors in File",
-		"command": "color_helper_file_index"
-	},
-	{
-		"caption": "Color Helper: Show Palettes",
-		"command": "color_helper",
-		"args": { "mode": "palette" }
-	},
-	{
-		"caption": "Color Helper: Show Color Info",
-		"command": "color_helper",
-		"args": { "mode": "info" }
-	},
-	{
-		"caption": "Color Helper: Show Color Picker",
-		"command": "color_helper",
-		"args": { "mode": "color_picker" }
-	}
+    {
+        "caption": "Color Helper: Index Colors in File",
+        "command": "color_helper_file_index"
+    },
+    {
+        "caption": "Color Helper: Show Palettes",
+        "command": "color_helper",
+        "args": { "mode": "palette" }
+    },
+    {
+        "caption": "Color Helper: Show Color Info",
+        "command": "color_helper",
+        "args": { "mode": "info" }
+    },
+    {
+        "caption": "Color Helper: Show Color Picker",
+        "command": "color_helper",
+        "args": { "mode": "color_picker" }
+    }
 ]
