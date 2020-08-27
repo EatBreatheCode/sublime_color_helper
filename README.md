@@ -1,9 +1,8 @@
-[![Donate via PayPal][donate-image]][donate-link]
-[![Discord][discord-image]][discord-link]
-[![Build][github-ci-image]][github-ci-link]
-[![Package Control Downloads][pc-image]][pc-link]
-![License][license-image]
 # ColorHelper
+[![Latest Release](https://img.shields.io/github/tag/EatBreatheCode/sublime_color_helper.svg?label=version)](https://github.com/EatBreatheCode/sublime_color_helper/releases)
+[![Build][github-ci-image]][github-ci-link]
+[![Package Control][pc-image]][pc-link]
+[![License][license-image]][license-link]
 
 ColorHelper makes work with colors easier by providing inline color previews in your documents (ST3 build 3118+) and offers tooltips with color previews of stylesheet colors, provides color translation, and allows the storing and accessing of favorite colors in color palettes.  Most features are optionally configurable. For the most part, these tooltips should show any time the cursor is in a CSS, SCSS, or SASS color.  It should also appear when in HTML style attributes.
 
@@ -34,10 +33,7 @@ This work is licensed under the [The MIT License](LICENSE).
 
 [github-ci-image]: https://github.com/facelessuser/ColorHelper/workflows/build/badge.svg
 [github-ci-link]: https://github.com/facelessuser/ColorHelper/actions?workflow=build
-[discord-image]: https://img.shields.io/discord/678289859768745989?logo=discord&logoColor=aaaaaa&color=mediumpurple&labelColor=333333
-[discord-link]: https://discord.gg/TWs8Tgr
 [pc-image]: https://img.shields.io/packagecontrol/dt/ColorHelper.svg?labelColor=333333&logo=sublime%20text
 [pc-link]: https://packagecontrol.io/packages/ColorHelper
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?labelColor=333333
-[donate-image]: https://img.shields.io/badge/Donate-PayPal-3fabd1?logo=paypal
-[donate-link]: https://www.paypal.me/facelessuser
+[license-link]: LICENSE
