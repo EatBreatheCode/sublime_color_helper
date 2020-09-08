@@ -92,7 +92,7 @@
                             {
                                 "caption": "Documentation",
                                 "command": "color_helper_open_site",
-                                "args": { "url": "https://facelessuser.github.io/ColorHelper/" }
+                                "args": { "url": "https://eatbreathecode.github.io/sublime_color_helper/" }
                             },
                             {
                                 "caption": "Quick Start Guide",
@@ -107,7 +107,7 @@
                             {
                                 "caption": "Issues",
                                 "command": "color_helper_open_site",
-                                "args": { "url": "https://github.com/facelessuser/ColorHelper/issues" }
+                                "args": { "url": "https://github.com/EatBreatheCode/sublime_color_helper/issues" }
                             },
                             {
                                 "caption": "README",
