@@ -31,8 +31,8 @@ https://eatbreathecode.github.io/sublime_color_helper/
 
 This work is licensed under the [The MIT License](LICENSE).
 
-[github-ci-image]: https://github.com/facelessuser/ColorHelper/workflows/build/badge.svg
-[github-ci-link]: https://github.com/facelessuser/ColorHelper/actions?workflow=build
+[github-ci-image]: https://github.com/facelessuser/ColorHelper/workflows/build/badge.svg?branch=master&event=push
+[github-ci-link]: https://github.com/facelessuser/ColorHelper/actions?query=workflow%3Abuild+branch%3Amaster
 [pc-image]: https://img.shields.io/packagecontrol/dt/ColorHelper.svg?labelColor=333333&logo=sublime%20text
 [pc-link]: https://packagecontrol.io/packages/ColorHelper
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?labelColor=333333

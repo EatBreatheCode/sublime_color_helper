@@ -428,6 +428,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
     def get_color_info(self):
         """Get color info."""
 
+        all_space = "all" in self.space_separator_syntax
         rgba = util.RGBA(self.color)
         self.template_vars['rgb_r'] = rgba.r
         self.template_vars['rgb_g'] = rgba.g
@@ -441,6 +442,9 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
         self.template_vars['hwb_h'] = util.fmt_float(h * 360.0)
         self.template_vars['hwb_w'] = util.fmt_float(w * 100.0)
         self.template_vars['hwb_b'] = util.fmt_float(b * 100.0)
+        self.template_vars['rgb_comma'] = not all_space and "rgb" not in self.space_separator_syntax
+        self.template_vars['hsl_comma'] = not all_space and "hsl" not in self.space_separator_syntax
+        self.template_vars['hwb_comma'] = not all_space and "hwb" not in self.space_separator_syntax
 
         if self.web_color and 'webcolors' in self.allowed_colors:
             self.template_vars['webcolor_info'] = True
@@ -530,7 +534,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
     def run(
         self, edit, color='#ffffff', allowed_colors=util.ALL, use_hex_argb=None,
         compress_hex=False, hsl=False, hirespick=None, colornames=False,
-        on_done=None, on_cancel=None
+        on_done=None, on_cancel=None, space_separator_syntax=None
     ):
         """Run command."""
 
@@ -547,6 +551,7 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
             rgba.brightness(1.1 if rgba.get_luminance() <= 127 else .9)
         self.default_border = rgba.get_rgb()
 
+        self.space_separator_syntax = space_separator_syntax if space_separator_syntax is not None else []
         self.on_done = on_done
         self.on_cancel = on_cancel
         self.use_hex_argb = use_hex_argb
@@ -596,13 +601,12 @@ class ColorHelperPickerCommand(sublime_plugin.TextCommand):
 
         mdpopups.show_popup(
             self.view,
-            sublime.load_resource('Packages/ColorHelper/panels/color-picker.html'),
+            util.FRONTMATTER + sublime.load_resource('Packages/ColorHelper/panels/color-picker.html'),
             css=util.ADD_CSS,
             wrapper_class="color-helper content",
             max_width=1024, max_height=(500 if hirespick or colornames else 725),
             on_navigate=self.handle_href,
-            template_vars=self.template_vars,
-            nl2br=False
+            template_vars=self.template_vars
         )
 
     def handle_href(self, href):
@@ -667,7 +671,7 @@ class ColorHelperPickerPanel(sublime_plugin.WindowCommand):
     def run(
         self, color="#ffffffff", allowed_colors=util.ALL,
         use_hex_argb=None, compress_hex=False,
-        on_done=None, on_cancel=None
+        on_done=None, on_cancel=None, space_separator_syntax=None
     ):
         """Run command."""
 
@@ -676,6 +680,7 @@ class ColorHelperPickerPanel(sublime_plugin.WindowCommand):
         self.compress_hex = compress_hex
         self.use_hex_argb = use_hex_argb
         self.allowed_colors = allowed_colors
+        self.space_separator_syntax = space_separator_syntax
         view = self.window.show_input_panel(
             '(hex) #RRGGBBAA', color, self.handle_value, None, None
         )
@@ -698,6 +703,7 @@ class ColorHelperPickerPanel(sublime_plugin.WindowCommand):
                 {
                     "color": value, "allowed_colors": self.allowed_colors,
                     "use_hex_argb": self.use_hex_argb, "compress_hex": self.compress_hex,
-                    "on_done": self.on_done, "on_cancel": self.on_cancel
+                    "on_done": self.on_done, "on_cancel": self.on_cancel,
+                    "space_separator_syntax": self.space_separator_syntax
                 }
             )
