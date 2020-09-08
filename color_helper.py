@@ -1483,6 +1483,9 @@ class ColorHelperListener(sublime_plugin.EventListener):
                             print("DEPRECATED: '{}' specifier is deprecated, please use 'css4'".format(color))
                         for c in util.LEVEL4:
                             allowed_colors.add(c)
+                    elif color == "css4":
+                        for c in util.CSS4:
+                            allowed_colors.add(c)
                     elif color == "all":
                         for c in util.ALL:
                             allowed_colors.add(c)

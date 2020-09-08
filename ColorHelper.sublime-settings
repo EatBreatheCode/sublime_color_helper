@@ -84,9 +84,9 @@
             "scan_scopes": [
                 // https://packagecontrol.io/packages/CSS3
                 "meta.declaration-list.css -support.type.property-name.css -comment -string",
-                // CSS, CSS in HTML etc. (based on: Sublime Default)
+                // CSS in HTML etc. (based on: Sublime Default)
                 "meta.property-value.css -comment -string",
-                // CSS3, CSS3 in HTML etc. (based on: https://packagecontrol.io/packages/CSS3)
+                // CSS3 in HTML etc. (based on: https://packagecontrol.io/packages/CSS3)
                 "meta.value.css -comment -string",
                 // HTML attributes (based on: Sublime Default)
                 // "meta.tag.inline.any.html string.quoted -constant.character.entity.html", (Commented to prevent colors in certain HTML attributes)
@@ -166,7 +166,7 @@
             "space_separator_syntax": ["gray", "hwb"]
         },
         {
-                // Sass (based on https://packagecontrol.io/packages/Syntax%20Highlighting%20for%20PostCSS)
+            // Sass (based on https://packagecontrol.io/packages/Syntax%20Highlighting%20for%20PostCSS)
             "syntax_files": ["Syntax Highlighting for PostCSS/Syntaxes/PostCSS"],
             "syntax_filter": "allowlist",
             "base_scopes": [

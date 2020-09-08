@@ -1,1 +1,1 @@
-Please follow this link to see Contributing &amp; Support documentation: http://facelessuser.github.io/ColorHelper/contributing/.
+Please follow this link to see Contributing &amp; Support documentation: https://eatbreathecode.github.io/sublime_color_helper/contributing/.

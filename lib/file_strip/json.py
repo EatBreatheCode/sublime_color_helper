@@ -23,7 +23,7 @@ JSON_PATTERN = re.compile(
         )
       | (?P<code>
             "(?:\\.|[^"\\])*"            # double quoted string
-          | .[^,"']*                   # everything else
+          | .[^,"']*                     # everything else
         )
     ''',
     re.DOTALL
