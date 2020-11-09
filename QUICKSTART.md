@@ -15,7 +15,7 @@ ColorHelper is designed to do the following:
         ![inline](res://Packages/ColorHelper/docs/src/markdown/images/palettes.png){: width=315px, height=269px }
 
     - Access a limited native color picker or a more native color picker via the
-    [ColorPicker plugin](https://eatbreathecode.github.io/sublime_color_helper/usage/#enable_color_picker).
+    [ColorPicker plugin](https://codebyzach.github.io/sublime_color_helper/usage/#enable_color_picker).
 
         ![inline](res://Packages/ColorHelper/docs/src/markdown/images/alternate_color_picker.png){: width=493px, height=534px }
 
@@ -23,7 +23,7 @@ Color previews should dynamically appear in supported files.  They are loaded as
 
 Popup panels will appear when your cursor is on a color or when you click a color preview, you can disable both features if you like.
 
-For more information on using and configuring the panels, check out the [documentation](https://eatbreathecode.github.io/sublime_color_helper/usage/).
+For more information on using and configuring the panels, check out the [documentation](https://codebyzach.github.io/sublime_color_helper/usage/).
 
 # ColorHelper Doesn't Support My Sass or SCSS Variables
 
@@ -45,5 +45,5 @@ to allow more flexible ways to define custom colors, but that work has not been 
 # I Need Help!
 
 That's okay.  Bugs are sometimes introduced or discovered in existing code.  Sometimes the documentation isn't clear.
-Support can be found over on the [official repo](https://github.com/EatBreatheCode/sublime_color_helper/issues).  Make sure to first search the documentation and previous issues
+Support can be found over on the [official repo](https://github.com/CodeByZach/sublime_color_helper/issues).  Make sure to first search the documentation and previous issues
 before opening a new issue.  And when creating a new issue, make sure to fill in the provided issue template.  Please be courteous and kind in your interactions.

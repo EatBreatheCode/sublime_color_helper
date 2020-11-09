@@ -37,7 +37,7 @@ For those who want to install ColorHelper without package control, here are the 
 
 2. Download and unpack or git clone the latest ColorHelper release and unpack as `ColorHelper`:
 
-    - https://github.com/EatBreatheCode/sublime_color_helper -> ColorHelper
+    - https://github.com/CodeByZach/sublime_color_helper -> ColorHelper
 
 3. Create a folder under `Packages` called `00-dependencies` and under that folder create a file called `00-dependencies.py`:
 
@@ -209,7 +209,7 @@ For those who want to install ColorHelper without package control, here are the 
 
     ```
     cd /path/to/Sublime Text 3/Packages
-    git clone https://github.com/EatBreatheCode/sublime_color_helper.git ColorHelper
+    git clone https://github.com/CodeByZach/sublime_color_helper.git ColorHelper
     ```
 
 3. Restart Sublime Text.

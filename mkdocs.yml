@@ -1,6 +1,6 @@
 site_name: ColorHelper
-site_url: https://eatbreathecode.github.io/sublime_color_helper/
-repo_url: https://github.com/EatBreatheCode/sublime_color_helper/
+site_url: https://codebyzach.github.io/sublime_color_helper/
+repo_url: https://github.com/CodeByZach/sublime_color_helper/
 edit_uri: tree/master/docs/src/markdown
 site_description: Popup tooltips and previews for stylesheet colors.
 copyright: |
@@ -59,7 +59,7 @@ markdown_extensions:
       repo_url_shortener: true
       repo_url_shorthand: true
       social_url_shorthand: true
-      user: EatBreatheCode
+      user: CodeByZach
       repo: sublime_color_helper
   - pymdownx.tilde:
   - pymdownx.caret:
@@ -86,7 +86,7 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/EatBreatheCode
+      link: https://github.com/CodeByZach
 
 plugins:
   - search
